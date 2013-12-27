@@ -67,13 +67,14 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="list.hpp" />
+    <ClInclude Include="false_depend.hpp" />
     <ClInclude Include="mt.hpp" />
     <ClInclude Include="mtc.hpp" />
     <ClInclude Include="mtc_eq.hpp" />
     <ClInclude Include="mtc_ord.hpp" />
     <ClInclude Include="mt_integral.hpp" />
     <ClInclude Include="mt_list.hpp" />
+    <ClInclude Include="mt_util_uncurry.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

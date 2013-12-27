@@ -10,6 +10,10 @@ namespace rasmeta {
   template<class...Uniquifiers>
   struct mt_any {};
 
+  // Arrow Metatype. Used to mark functions. NOTE: All functions are curried!
+  template<class mt_L, class mt_R>
+  struct mt_arr {};
+
   ////////////////////////////////////
   // same_mt calculates if two metatypes are unifiable
   template <class L, class R>
