@@ -3,7 +3,7 @@
 namespace rasmeta {
 
   template<class IntegralT>
-  struct mt_integral {};
+  struct mt_integral : mt_base {};
 
   using mt_int = mt_integral<long long>;
   using mt_bool = mt_integral<bool>;

@@ -22,7 +22,7 @@ namespace rasmeta {
   struct mtc_ord<mt_integral<IntegralT>> : implicits<mtc_ord, mt_integral<IntegralT>>{
     template<IntegralT N, IntegralT M>
     // lt :: (Num a) => a -> a -> Bool
-    bool_c<(N < M)> lt(constant_c<IntegralT, N>, constant_c<IntegralT, M>) {
+    static bool_c<(N < M)> lt(constant_c<IntegralT, N>, constant_c<IntegralT, M>) {
       return bool_c<(N < M)>();
     }
   };

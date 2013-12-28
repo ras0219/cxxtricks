@@ -19,7 +19,7 @@ namespace rasmeta {
   struct implicits<mtc_eq, T> {
     template<class L, class R>
     // (implicit) neq :: a -> a -> Bool
-    decltype(!mtc_eq<T>::eq(L(), R())) neq(L, R) {
+    static decltype(!mtc_eq<T>::eq(L(), R())) neq(L, R) {
       return !mtc_eq<T>::eq(L(), R());
     }
   };
@@ -32,7 +32,7 @@ namespace rasmeta {
   struct mtc_eq<mt_integral<IntegralT>> : implicits<mtc_eq, mt_integral<IntegralT>>{
     template<IntegralT N, IntegralT M>
     // eq :: (Num a) => a -> a -> Bool
-    bool_c<(N == M)> eq(constant_c<IntegralT, N>, constant_c<IntegralT, M>) {
+    static bool_c<(N == M)> eq(constant_c<IntegralT, N>, constant_c<IntegralT, M>) {
       return bool_c<(N == M)>();
     }
   };
