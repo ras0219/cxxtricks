@@ -2,6 +2,20 @@
 
 #include <type_traits>
 
+#if (defined(__GNUG__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ <= 8))) \
+  || (defined(__clang__))
+namespace std {
+  // template<bool B, class T = void>
+  // struct enable_if {};
+
+  // template<class T>
+  // struct enable_if<true, T> { typedef T type; };
+
+  template<bool B, class T = void>
+  using enable_if_t = typename enable_if<B, T>::type;
+}
+#endif
+
 // So it goes like this:
 //  * Metatypes are structs with the prefix mt_
 //  * Metatypes of kind * are simple structs
@@ -82,7 +96,8 @@ namespace rasmeta {
 
   template<class F, class A, class...B>
   struct _Apply_impl<F, A, B...> {
-    using type = typename _Apply_impl<typename F::template apply<A>::type, B...>::type;
+    using F2 = typename F::template apply<A>::type;
+    using type = typename _Apply_impl<F2, B...>::type;
   };
 
   template<class...F>

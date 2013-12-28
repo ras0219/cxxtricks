@@ -88,7 +88,7 @@ namespace rasmeta {
   // cons :: a -> [] -> [a]
   struct _cons_impl<A, empty_list<mt_>> {
     static_assert(same_mt<Metatype<A>, mt_>::value, "World 2: Cannot add an A into an empty list of type [B]");
-    using type = list<A, empty_list<Metatype<A>>>();
+    using type = list<A, empty_list<Metatype<A>>>;
   };
 
   // cons :: a -> [a] -> [a]
