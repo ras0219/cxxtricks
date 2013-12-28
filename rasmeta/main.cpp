@@ -8,13 +8,13 @@ int main()
 {
   //wrap_f<rasmeta::head> headfunc;
 
-  auto f = nil();
-  auto f1 = apply<cons>(int_c<0>());
-  list<int_c<0>, empty_list<Metatype<int_c<0>>>> f2 = partial(f1, f);
+  static_assert(same_mt<mt_list<mt_int>, mt_list<mt_any_>>::value, "Lists of ints must match lists of any");
 
-  //auto f1 = pretty::cons(int_c<1>(), f);
-  //auto f2 = pretty::cons(int_c<2>(), f1);
-  //auto f3 = pretty::cons(bool_c<true>(), f);
+  static_assert(std::is_same<decltype(mt_int(), mt_bool(), mt_int()), mt_tuple<mt_int, mt_bool, mt_int>>::value, "Failed operator, overload test1");
 
-  //auto f2head = pretty::head(f2);
+  auto f = nil;
+  auto f1 = apply(cons, int_c<0>(), f);
+
+  auto f2 = make_list(int_c<1>(), int_c<0>());
+
 }

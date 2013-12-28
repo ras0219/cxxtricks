@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include "false_depend.hpp"
 
 #if (defined(__GNUG__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ <= 8))) \
   || (defined(__clang__))
@@ -62,12 +63,12 @@ namespace rasmeta {
   struct same_mt {
     enum { value = false };
   };
-  template <class L, class...Us>
-  struct same_mt<L, mt_any<Us...>> {
+  template <class L>
+  struct same_mt<L, mt_any_> {
     enum { value = true };
   };
-  template <class...Us, class R>
-  struct same_mt<mt_any<Us...>, R> {
+  template <class R>
+  struct same_mt<mt_any_, R> {
     enum { value = true };
   };
   template <class L>
@@ -78,11 +79,74 @@ namespace rasmeta {
   struct same_mt<C<L>, C<R>> {
     enum { value = same_mt<L, R>::value };
   };
+  template <template<class>class C, class L>
+  struct same_mt<C<L>, C<L>> {
+    enum { value = true };
+  };
+  template <template<class, class>class C, class L, class L2, class R, class R2>
+  struct same_mt<C<L, L2>, C<R, R2>> {
+    enum { value = same_mt<L, R>::value && same_mt<L2, R2>::value };
+  };
+  template <template<class, class>class C, class L, class L2>
+  struct same_mt<C<L, L2>, C<L, L2>> {
+    enum { value = true };
+  };
+  /////////////////////////////////
+  // Perform unification on types
+  template <class L, class R>
+  struct unify_mt {
+    static_assert(!same_mt<L, R>::value, "INTERNAL LIBRARY ERROR -- unify_mt<> and same_mt<> differ!");
+    static_assert(____false_depend<R>::value, "Unification failed");
+  };
+  template<class L>
+  struct unify_mt<L, mt_any_> {
+    using type = L;
+  };
+  template<class R>
+  struct unify_mt<mt_any_, R> {
+    using type = R;
+  };
+  template<class L>
+  struct unify_mt<L, L> {
+    using type = L;
+  };
+  template<template<class>class C, class L, class R>
+  struct unify_mt<C<L>, C<R>> {
+    using type = C<typename unify_mt<L, R>::type>;
+  };
+  template<template<class>class C, class L>
+  struct unify_mt<C<L>, C<L>> {
+    using type = C<L>;
+  };
+  template<template<class, class>class C, class L, class L2, class R, class R2>
+  struct unify_mt<C<L, L2>, C<R, R2>> {
+    using type = C<typename unify_mt<L, R>::type, typename unify_mt<L2, R2>::type>;
+  };
+  template<template<class, class>class C, class L, class R>
+  struct unify_mt<C<L, R>, C<L, R>> {
+    using type = C<L, R>;
+  };
 
   /////////////////////////////////
-  template<class T>
   // Function to extract the metatype
+  template<class T>
   using Metatype = typename T::metatype;
+
+
+  //////////////////////////////////
+  // Function to detect the metatype
+  template<class F>
+  struct has_metatype {
+    using yes = char[1];
+    using no = char[2];
+
+    template<class T>
+    static yes& test(Metatype<T>*);
+    template<class T>
+    static no& test(...);
+
+    static const bool value = sizeof(test<F>(0)) == sizeof(yes);
+  };
 
   ///////////////////////////////
   // Convenience alias for applications
@@ -94,18 +158,23 @@ namespace rasmeta {
     using type = F;
   };
 
+  template<class L, class R>
+  struct static_assert_helper {
+    static_assert(same_mt<L, R>::value, "Metatype mismatch");
+  };
+
   template<class F, class A, class...B>
   struct _Apply_impl<F, A, B...> {
+    using MTF = Metatype<F>;
+    using MTA = mt_arr<Metatype<A>, mt_any_>;
+    static static_assert_helper<Metatype<F>, mt_arr<Metatype<A>, mt_any_>> f;
     using F2 = typename F::template apply<A>::type;
     using type = typename _Apply_impl<F2, B...>::type;
   };
 
   template<class...F>
-  using Apply = typename _Apply_impl<F...>::type;
+  using apply_t = typename _Apply_impl<F...>::type;
 
-  template<class F, class...Args>
-  Apply<F, Args...> apply(Args...) { return Apply<F, Args...>(); }
-
-  template<class F, class...Args>
-  Apply<F, Args...> partial(F, Args...) { return Apply<F, Args...>(); }
+  template<class...Args>
+  apply_t<Args...> apply(Args...) { return apply_t<Args...>(); }
 }
