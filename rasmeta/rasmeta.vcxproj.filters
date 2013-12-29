@@ -47,5 +47,14 @@
     <ClInclude Include="has_apply.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mtc_monoid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mtc_foldable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mt_swap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

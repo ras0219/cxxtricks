@@ -98,7 +98,7 @@ namespace rasmeta {
   };
 
   // cons :: a -> [a] -> [a]
-  struct cons_t {
+  static const struct cons_t {
     template<class A>
     struct apply {
       struct type {
@@ -114,7 +114,7 @@ namespace rasmeta {
   ////////////////////////////////////
   // empty_list :: []
   using nil_t = empty_list<mt_any_>;
-  static nil_t nil;
+  static const nil_t nil;
 
   ////////////////////////////////////
   // make_list -- shortcut function
@@ -138,3 +138,75 @@ namespace rasmeta {
 
 }
 
+#include "mtc_foldable.hpp"
+
+namespace rasmeta {
+
+  template<class T>
+  struct mtc_foldable<mt_list<T>> : implicits<mtc_foldable, mt_list<T>>{
+    ////////////////////////////////////
+    // foldr :: (a -> b -> b) -> b -> [a] -> b
+    static const struct foldr_t foldr;
+
+    template<class F, class I, class L>
+    struct _foldr_impl {
+      static_assert(same_mt<Metatype<L>, mt_list<mt_any_>>::value, "foldr's third argument must be a list");
+      static_assert(____false_depend<L>::value, "INTERNAL LIBRARY ERROR: Dispatch failed on list!");
+    };
+    template<class F, class I, class L_MT>
+    struct _foldr_impl<F, I, empty_list<L_MT>> {
+      using type = I;
+    };
+    template<class F, class I, class H, class L>
+    struct _foldr_impl<F, I, list<H, L>> {
+      using type = decltype(apply(F(), H(), apply(foldr, F(), I(), L())));
+    };
+
+    static const struct foldr_t {
+      using FMT = decltype(mt_any_() >>= mt_any_() >>= mt_any_());
+      using metatype = decltype(FMT() >>= mt_any_() >>= mt_list<mt_any_>() >>= mt_any_());
+      template<class F>
+      struct apply {
+        static_assert(same_mt<Metatype<F>, FMT>::value, "foldr must be applied to a function of type 'a -> b -> b'");
+        using FMT2 = unify_mt_t<Metatype<F>, FMT>; // retrieve the unified type of the first argument
+        using A_MT = arg_mt<FMT2>; // Fetch the 'a' type variable from the function 'a -> b -> b'
+        using R_MT = ret_mt<FMT2>; // Fetch the 'b -> b' type from the function
+        using B_MT = arg_mt<R_MT>; // Fetch the 'b' type variable from 'b -> b'
+        struct type {
+          using metatype = decltype(B_MT() >>= mt_list<A_MT>() >>= B_MT());
+          template<class I>
+          struct apply {
+            static_assert(same_mt<Metatype<I>, B_MT>::value, "foldr's second argument must be of type 'b'");
+            using B2_MT = unify_mt_t<Metatype<I>, B_MT>; // Utilize the new information about type variable b
+            // TODO: recheck entire type up to here
+            struct type {
+              using metatype = decltype(mt_list<A_MT>() >>= B2_MT());
+              template<class L>
+              using apply = _foldr_impl<F, I, L>;
+            };
+          };
+        };
+      };
+    };
+  };
+
+  ////////////////////////////////////////
+  // concat :: [a] -> [a] -> [a]
+}
+
+#include "mtc_monoid.hpp"
+
+namespace rasmeta {
+
+  template<class T>
+  struct mtc_monoid<mt_list<T>> : implicits<mtc_monoid, mt_list<T>>{
+    using mempty_t = nil_t;
+    static const mempty_t mempty;
+
+    ////////////////////////////////////
+    // 
+    static const struct mappend_t {
+    } mappend;
+  };
+
+}

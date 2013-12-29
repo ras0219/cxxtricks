@@ -39,6 +39,18 @@ namespace rasmeta {
   template<class mt_L, class mt_R>
   struct mt_arr : mt_base {};
 
+  // Convenience function for retrieving function parts
+  template<class T> struct _mt_arr_t_fetch_impl;
+  template<class L, class R> struct _mt_arr_t_fetch_impl<mt_arr<L, R>> {
+    using left = L;
+    using right = R;
+  };
+
+  template<class ArrMT>
+  using arg_mt = typename _mt_arr_t_fetch_impl<ArrMT>::left;
+  template<class ArrMT>
+  using ret_mt = typename _mt_arr_t_fetch_impl<ArrMT>::right;
+
   //// This might be awful. Or awesome. Probably awfully awesome...
   // Design decisions: both > and >> are left associative.
   //    -> requires an identifier on the right hand side
@@ -126,6 +138,8 @@ namespace rasmeta {
   struct unify_mt<C<L, R>, C<L, R>> {
     using type = C<L, R>;
   };
+  template<class L, class R>
+  using unify_mt_t = typename unify_mt<L, R>::type;
 
   /////////////////////////////////
   // Function to extract the metatype
