@@ -4,6 +4,7 @@
 #include "mt.hpp"
 #include "false_depend.hpp"
 #include "mt_util_uncurry.hpp"
+#include "mt_swap.hpp"
 
 namespace rasmeta {
 
@@ -128,13 +129,16 @@ namespace rasmeta {
 
   template<class A, class...Args>
   struct _make_list_impl<A, Args...> {
-    using type = list<A, typename _make_list_impl<Args...>::type>;
+    using type = apply_t<cons_t, A, typename _make_list_impl<Args...>::type>;
   };
 
   template<class...Args>
   typename _make_list_impl<Args...>::type make_list(Args...) {
     return typename _make_list_impl<Args...>::type();
   }
+
+  template<class...Args>
+  using make_list_t = typename _make_list_impl<Args...>::type;
 
 }
 
@@ -162,7 +166,7 @@ namespace rasmeta {
       using type = decltype(apply(F(), H(), apply(foldr, F(), I(), L())));
     };
 
-    static const struct foldr_t {
+    struct foldr_t {
       using FMT = decltype(mt_any_() >>= mt_any_() >>= mt_any_());
       using metatype = decltype(FMT() >>= mt_any_() >>= mt_list<mt_any_>() >>= mt_any_());
       template<class F>
@@ -192,6 +196,13 @@ namespace rasmeta {
 
   ////////////////////////////////////////
   // concat :: [a] -> [a] -> [a]
+  struct _concat_impl {
+    using foldr_t = mtc_foldable<mt_list<mt_any<>>>::foldr_t;
+
+    using concat_t = apply_t<swap_t, apply_t<foldr_t, cons_t>>;
+  };
+  // concat :: [a] -> [a] -> [a]
+  using concat_t = _concat_impl::concat_t;
 }
 
 #include "mtc_monoid.hpp"
@@ -204,9 +215,9 @@ namespace rasmeta {
     static const mempty_t mempty;
 
     ////////////////////////////////////
-    // 
-    static const struct mappend_t {
-    } mappend;
+    // mappend :: [a] -> [a] -> [a]
+    using mappend_t = concat_t;
+    static const mappend_t mappend;
   };
 
 }

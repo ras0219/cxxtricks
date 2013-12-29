@@ -56,5 +56,11 @@
     <ClInclude Include="mt_swap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mt_maybe.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mt_lambda.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

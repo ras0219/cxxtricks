@@ -38,6 +38,11 @@ namespace rasmeta {
   // Arrow Metatype. Used to mark functions.
   template<class mt_L, class mt_R>
   struct mt_arr : mt_base {};
+  // Convenience function for declaring multi-argument functions
+  template<class mt_A1, class mt_A2, class mt_R>
+  using mt_arr2 = mt_arr<mt_A1, mt_arr<mt_A2, mt_R>>;
+  template<class mt_A1, class mt_A2, class mt_A3, class mt_R>
+  using mt_arr3 = mt_arr<mt_A1, mt_arr<mt_A2, mt_arr<mt_A3, mt_R>>>;
 
   // Convenience function for retrieving function parts
   template<class T> struct _mt_arr_t_fetch_impl;
@@ -83,6 +88,10 @@ namespace rasmeta {
   struct same_mt<mt_any_, R> {
     enum { value = true };
   };
+  template <>
+  struct same_mt<mt_any_, mt_any_> {
+    enum { value = true };
+  };
   template <class L>
   struct same_mt<L, L> {
     enum { value = true };
@@ -122,6 +131,10 @@ namespace rasmeta {
   struct unify_mt<L, L> {
     using type = L;
   };
+  template <>
+  struct unify_mt<mt_any_, mt_any_> {
+    using type = mt_any_;
+  };
   template<template<class>class C, class L, class R>
   struct unify_mt<C<L>, C<R>> {
     using type = C<typename unify_mt<L, R>::type>;
@@ -146,6 +159,9 @@ namespace rasmeta {
   template<class T>
   using Metatype = typename T::metatype;
 
+  // Automatically apply Metatype<> and unify
+  template<class A, class B>
+  using Metatype2 = unify_mt_t<Metatype<A>, Metatype<B>>;
 
   //////////////////////////////////
   // Function to detect the metatype
@@ -181,7 +197,7 @@ namespace rasmeta {
   struct _Apply_impl<F, A, B...> {
     using MTF = Metatype<F>;
     using MTA = mt_arr<Metatype<A>, mt_any_>;
-    static static_assert_helper<Metatype<F>, mt_arr<Metatype<A>, mt_any_>> f;
+    static static_assert_helper<MTF, MTA> f;
     using F2 = typename F::template apply<A>::type;
     using type = typename _Apply_impl<F2, B...>::type;
   };

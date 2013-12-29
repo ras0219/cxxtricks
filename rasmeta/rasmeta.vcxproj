@@ -76,7 +76,9 @@
     <ClInclude Include="mtc_ord.hpp" />
     <ClInclude Include="mtc_foldable.hpp" />
     <ClInclude Include="mt_integral.hpp" />
+    <ClInclude Include="mt_lambda.hpp" />
     <ClInclude Include="mt_list.hpp" />
+    <ClInclude Include="mt_maybe.hpp" />
     <ClInclude Include="mt_swap.hpp" />
     <ClInclude Include="mt_util_uncurry.hpp" />
   </ItemGroup>

@@ -16,12 +16,19 @@ namespace rasmeta {
 
     template<class F>
     struct apply {
-      static_assert(has_metatype<A>::value, "Argument F must have a metatype");
-      static_assert(same_mt<Metatype<A>, FMT>::value, "Argument F must unify with type 'a -> b -> c'");
+      static_assert(has_metatype<F>::value, "Argument F must have a metatype");
+      static_assert(same_mt<Metatype<F>, FMT>::value, "Argument F must unify with type 'a -> b -> c'");
       struct type {
-        template<class L>
-        using apply = _cons_impl<A, L>;
-        using metatype = decltype(mt_list<Metatype<A>>() >>= mt_list<Metatype<A>>());
+        template<class A>
+        struct apply {
+          struct type {
+            template<class B>
+            using apply = _swap_impl<F, A, B>;
+
+            using metatype = mt_arr<mt_any_, mt_any_>;
+          };
+        };
+        using metatype = FMT;
       };
     };
   } swap;
