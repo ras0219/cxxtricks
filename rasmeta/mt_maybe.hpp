@@ -84,18 +84,12 @@ namespace rasmeta {
   }
 
   template<class T>
-  // (Monoid a) => Monoid (Maybe a)
-  struct mtc_monoid<mt_maybe<T>> : implicits<mtc_monoid, mt_maybe<T>>{
-    // mempty :: Nothing
-    using mempty_t = nothing_t<Metatype<T>>;
-    // mempty :: Nothing
-    static const mempty_t mempty;
-
-    ////////////////////////////////////
-    // mappend :: (Monoid a) => Maybe a -> Maybe a -> Maybe a
-    using mappend_t = _maybe_mappend::l;
-    // mappend :: (Monoid a) => Maybe a -> Maybe a -> Maybe a
-    static const mappend_t mappend;
+  // Foldable Maybe
+  struct mtc_foldable<mt_maybe<T>> : implicits<mtc_foldable, mt_maybe<T>>{
+    // foldr :: (a -> b -> b) -> b -> Maybe a -> b
+    using foldr_t = _maybe_foldr::l;
+    // foldr :: (a -> b -> b) -> b -> Maybe a -> b
+    static const foldr_t foldr;
   };
 
 }
