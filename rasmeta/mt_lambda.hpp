@@ -21,7 +21,7 @@ namespace rasmeta {
   struct lambda1 {
     template<class A>
     struct apply {
-      static_assert(is_mt<A>::value, "A must have a metatype");
+      //static_assert(is_mt<A>::value, "A must have a metatype");
       // check type & dispatch
       using type = typename assert_type_t<Metatype<A>, Arg1T, Impl<A>>::type;
     };
@@ -32,11 +32,11 @@ namespace rasmeta {
   struct lambda2 {
     template<class A>
     struct apply {
-      static_assert(is_mt<A>::value, "A must have a metatype");
+      //static_assert(is_mt<A>::value, "A must have a metatype");
       struct _type {
         template<class B>
         struct apply {
-          static_assert(is_mt<B>::value, "B must have a metatype");
+          //static_assert(is_mt<B>::value, "B must have a metatype");
           // check type & dispatch
           using type = typename assert_type_t<Metatype<B>, Arg2T, Impl<A, B>>::type;
         };
@@ -54,15 +54,15 @@ namespace rasmeta {
   struct lambda3 {
     template<class A>
     struct apply {
-      static_assert(is_mt<A>::value, "A must have a metatype");
+      //static_assert(is_mt<A>::value, "A must have a metatype");
       struct _type {
         template<class B>
         struct apply {
-          static_assert(is_mt<B>::value, "B must have a metatype");
+          //static_assert(is_mt<B>::value, "B must have a metatype");
           struct _type {
             template<class C>
             struct apply {
-              static_assert(is_mt<C>::value, "C must have a metatype");
+              //static_assert(is_mt<C>::value, "C must have a metatype");
               // check type & dispatch
               using type = typename assert_type_t<Metatype<C>, Arg3T, Impl<A, B, C>>::type;
             };

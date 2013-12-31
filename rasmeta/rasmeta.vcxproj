@@ -75,6 +75,7 @@
     <ClInclude Include="mtc_monoid.hpp" />
     <ClInclude Include="mtc_ord.hpp" />
     <ClInclude Include="mtc_foldable.hpp" />
+    <ClInclude Include="mtk.hpp" />
     <ClInclude Include="mt_integral.hpp" />
     <ClInclude Include="mt_lambda.hpp" />
     <ClInclude Include="mt_list.hpp" />

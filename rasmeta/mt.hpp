@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include "false_depend.hpp"
+#include "mtk.hpp"
 
 #if (defined(__GNUG__) && (__GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ <= 8))) \
   || (defined(__clang__))
@@ -29,24 +30,50 @@ namespace rasmeta {
   template<class T>
   using is_mt = std::is_base_of<mt_base, T>;
 
-  // Wildcard Metatype. Used (for now) to make * -> * Metakinds concrete
+  // Wildcard Metatype. Used to represent type variables
   template<class...Uniquifiers>
-  struct mt_any : mt_base {};
+  struct mt_any : mt_base { using metakind = mtk_base; };
 
+  // Currently uniquifiers are unused
   using mt_any_ = mt_any<>;
 
   // Arrow Metatype. Used to mark functions.
-  template<class mt_L, class mt_R>
-  struct mt_arr : mt_base {};
-  // Convenience function for declaring multi-argument functions
+  struct mt_arr : mt_base {
+    using metatype = mtk_arr<mtk_base, mtk_arr<mtk_base, mtk_base>>;
+    using unapply = mt_arr;
+
+    template<class A>
+    struct apply {
+      struct type {
+        using metatype = mtk_arr<mtk_base, mtk_base>;
+        using unapply = mt_arr;
+        using arg = A;
+
+        template<class B>
+        struct apply {
+          struct type {
+            using metatype = mtk_base;
+            using unapply = typename mt_arr::apply<A>::type;
+            using arg = B;
+          };
+        };
+      };
+    };
+  };
+  //template<class mt_L, class mt_R>
+  //struct mt_arr : mt_base { using metakind = mtk_base; };
+
+  // Convenience function for declaring function types
+  template<class mt_A1, class mt_A2>
+  using mt_arr1 = typename mt_arr::apply<mt_A1>::type::apply<mt_A2>::type;
   template<class mt_A1, class mt_A2, class mt_R>
-  using mt_arr2 = mt_arr<mt_A1, mt_arr<mt_A2, mt_R>>;
+  using mt_arr2 = mt_arr1<mt_A1, mt_arr1<mt_A2, mt_R>>;
   template<class mt_A1, class mt_A2, class mt_A3, class mt_R>
-  using mt_arr3 = mt_arr<mt_A1, mt_arr<mt_A2, mt_arr<mt_A3, mt_R>>>;
+  using mt_arr3 = mt_arr1<mt_A1, mt_arr2<mt_A2, mt_A3, mt_R>>;
 
   // Convenience function for retrieving function parts
   template<class T> struct _mt_arr_t_fetch_impl;
-  template<class L, class R> struct _mt_arr_t_fetch_impl<mt_arr<L, R>> {
+  template<class L, class R> struct _mt_arr_t_fetch_impl<mt_arr1<L, R>> {
     using left = L;
     using right = R;
   };
@@ -61,8 +88,8 @@ namespace rasmeta {
   //    -> requires an identifier on the right hand side
   // But >>= is actually right associative!
   // Thus the decltype(mt_any<>() >>= mt_num() >>= mt_list<mt_any<>>()) was born...
-  template<class mt_L, class mt_R, class = std::enable_if_t<is_mt<mt_L>::value && is_mt<mt_R>::value>>
-  mt_arr<mt_L, mt_R> operator >>=(mt_L, mt_R) { return mt_arr<mt_L, mt_R>(); }
+  //template<class mt_L, class mt_R, class = std::enable_if_t<is_mt<mt_L>::value && is_mt<mt_R>::value>>
+  //mt_arr<mt_L, mt_R> operator >>=(mt_L, mt_R) { return mt_arr<mt_L, mt_R>(); }
 
   // Tuple Metatype. Use for multiple parameters
   template<class...mt_T>
@@ -92,26 +119,7 @@ namespace rasmeta {
   struct same_mt<mt_any_, mt_any_> {
     enum { value = true };
   };
-  template <class L>
-  struct same_mt<L, L> {
-    enum { value = true };
-  };
-  template <template<class>class C, class L, class R>
-  struct same_mt<C<L>, C<R>> {
-    enum { value = same_mt<L, R>::value };
-  };
-  template <template<class>class C, class L>
-  struct same_mt<C<L>, C<L>> {
-    enum { value = true };
-  };
-  template <template<class, class>class C, class L, class L2, class R, class R2>
-  struct same_mt<C<L, L2>, C<R, R2>> {
-    enum { value = same_mt<L, R>::value && same_mt<L2, R2>::value };
-  };
-  template <template<class, class>class C, class L, class L2>
-  struct same_mt<C<L, L2>, C<L, L2>> {
-    enum { value = true };
-  };
+
   /////////////////////////////////
   // Perform unification on types
   template <class L, class R>
