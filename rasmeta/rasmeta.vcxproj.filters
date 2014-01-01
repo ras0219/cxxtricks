@@ -20,49 +20,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mtc.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mt.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mt_integral.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mtc_eq.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mtc_ord.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mt_list.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="false_depend.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mt_util_uncurry.hpp">
+    <ClInclude Include="mt_tsystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="has_apply.hpp">
+    <ClInclude Include="tcheck.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mtc_monoid.hpp">
+    <ClInclude Include="tcheck_structs.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mtc_foldable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mt_swap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mt_maybe.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mt_lambda.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mtk.hpp">
+    <ClInclude Include="tcheck_structs.test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

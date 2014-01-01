@@ -68,20 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="false_depend.hpp" />
-    <ClInclude Include="has_apply.hpp" />
-    <ClInclude Include="mt.hpp" />
-    <ClInclude Include="mtc.hpp" />
-    <ClInclude Include="mtc_eq.hpp" />
-    <ClInclude Include="mtc_monoid.hpp" />
-    <ClInclude Include="mtc_ord.hpp" />
-    <ClInclude Include="mtc_foldable.hpp" />
-    <ClInclude Include="mtk.hpp" />
-    <ClInclude Include="mt_integral.hpp" />
-    <ClInclude Include="mt_lambda.hpp" />
-    <ClInclude Include="mt_list.hpp" />
-    <ClInclude Include="mt_maybe.hpp" />
-    <ClInclude Include="mt_swap.hpp" />
-    <ClInclude Include="mt_util_uncurry.hpp" />
+    <ClInclude Include="mt_tsystem.hpp" />
+    <ClInclude Include="tcheck_structs.hpp" />
+    <ClInclude Include="tcheck_structs.test.hpp" />
+    <ClInclude Include="tcheck.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,42 +1,64 @@
-#include "mt_list.hpp"
-#include "mt_integral.hpp"
-#include "mt_util_uncurry.hpp"
+#include "tcheck.hpp"
+#include "mt_tsystem.hpp"
+//#include "tcheck.test.hpp"
 
+#include <iostream>
+
+using namespace std;
 using namespace rasmeta;
 
-template<class A, class DIVIDER, class B>
-struct assert_same_type {
-  static_assert(std::is_same<A, B>::value, "Types do not match");
-  static const int x = 0;
+template<long long N>
+ostream& operator<<(ostream& os, tvar<N>) {
+  return os << 't' << N;
+}
+
+template<class T1, class T2>
+ostream& operator<<(ostream& os, arr<T1, T2>) {
+  return os << T1() << " -> " << T2();
+}
+
+template<class T1a, class T1b, class T2>
+ostream& operator<<(ostream& os, arr<arr<T1a, T1b>, T2>) {
+  return os << '(' << arr<T1a, T1b>() << ") -> " << T2();
+}
+
+template<class T>
+ostream& operator<<(ostream& os, forall<T>) {
+  return os << "\\. " << T();
+}
+
+template<long long N>
+ostream& operator<<(ostream& os, tref<N>) {
+  if (N >= 0 && N < 26)
+    return os << (char)('a' + N);
+  return os << 'r' << N;
+}
+
+ostream& operator<<(ostream& os, concrete_type<int>) {
+  return os << "int";
+}
+
+ostream& operator<<(ostream& os, concrete_type<bool>) {
+  return os << "bool";
+}
+
+struct f : functional {
+  using func = lambda<_0>;
+  using type = typecheck<func>;
+};
+struct f2 : functional {
+  using func = lambda<app<_0, bool_c<true>>>;
+  using type = typecheck<func>;
+};
+struct f3 : functional {
+  using func = lambda<f>;
+  using type = typecheck<func>;
 };
 
-int main()
-{
-  //wrap_f<rasmeta::head> headfunc;
+int main() {
 
-  //static_assert(same_mt<mt_list<mt_int>, mt_list<mt_any_>>::value, "Lists of ints must match lists of any");
-
-  static_assert(std::is_same<decltype(mt_int(), mt_bool(), mt_int()), mt_tuple<mt_int, mt_bool, mt_int>>::value, "Failed operator, overload test1");
-
-  auto f = nil;
-  auto f1 = apply(cons, int_c<0>(), f);
-
-  using L0 = nil_t;
-  using L2 = apply_t<cons_t, int_c<0>, L0>;
-  using L3 = apply_t<cons_t, int_c<2>, L2>;
-  using L4 = apply_t<cons_t, int_c<1>, L3>;
-
-  using L0b = make_list_t<>;
-  using L2b = make_list_t<int_c<0>>;
-  using L4b = make_list_t<int_c<1>, int_c<2>, int_c<0>>;
-
-  auto L4c = make_list(int_c<1>(), int_c<2>(), int_c<0>());
-  auto _42 = assert_same_type<decltype(L4()), struct XXXXXXXX, decltype(L4c)>::x;
-  auto _42b = assert_same_type<L4b, struct XXXXXXXX, decltype(L4c)>::x;
-
-  auto _0 = assert_same_type<Metatype<L2>, struct XXXXXXXX, Metatype<L2b>>::x;
-  auto _4 = assert_same_type<L4, struct XXXXXXXX, L4b>::x;
-
-  auto f2 = make_list(int_c<1>(), int_c<0>());
-
+  cout << "f :: " << f::type() << endl;
+  cout << "f2 :: " << f2::type() << endl;
+  cout << "f3 :: " << f3::type() << endl;
+  cin.get();
 }
