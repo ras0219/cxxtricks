@@ -58,14 +58,33 @@ namespace rasmeta {
   };
   template<class e> using simplify = typename simplify1<e>::type;
 
-  template<class ef, class ea>
+  template<
+    class ef,
+    class ea,
+      bool is_ma = std::is_base_of<functional_ast, ef>::value,
+      bool is_mf = (!is_ma) && std::is_base_of<functional_metafunc, ef>::value
+  >
   struct simplify_apply1 {
     // Function application failed -- this is probably due to some black box builtin
     // Since we can't simplify the function itself, let's at least try to simplify the arg
     using type = app<ef, simplify<ea>>;
   };
   template<class ef, class ea>
-  struct simplify_apply1<lambda<ef>, ea> {
+  struct simplify_apply1<ef, ea, false, true> {
+    // ef is a metafunction! We can apply this at compile time!
+
+    // We will switch to "Applicative order" evaluation here in order to make metafunctions easier to use
+    using type = simplify<typename ef::func::template apply<simplify<ea>>>;
+  };
+
+  template<class ef, class ea>
+  struct simplify_apply1<ef, ea, true, false> {
+    // ef is a compiled ast! This means it provides a simplified ast as X::ast
+    using type = typename simplify_apply1<typename ef::ast, ea>::type;
+  };
+
+  template<class ef, class ea>
+  struct simplify_apply1<lambda<ef>, ea, false, false> {
     using e2 = beta_reduce<ef, ea, 0>;
     // Since we've successfully applied the function, simplify the result
     using type = simplify<e2>;
@@ -79,11 +98,10 @@ namespace rasmeta {
   };
 
   template<class AST>
-  struct compile {
-    static const bool compiled = true;
-    using ast = AST;
-    using simplified = simplify<ast>;
-    using type = typecheck<AST>;
+  struct compile : functional, functional_ast {
+    using original_ast = AST;
+    using type = typecheck<original_ast>;
+    using ast = simplify<original_ast>;
   };
 
 }

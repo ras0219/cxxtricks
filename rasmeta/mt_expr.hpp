@@ -39,6 +39,7 @@ namespace rasmeta {
   struct functional {};
   struct functional_metaval {};
   struct functional_metafunc {};
+  struct functional_ast {};
 
   template<class e>
   struct metatype {
@@ -88,12 +89,7 @@ namespace rasmeta {
 
         struct func {
           template<class T2>
-          struct apply : functional, functional_metaval {
-            using type = concrete_type<T>;
-
-            using value_type = T;
-            static const value_type value = T1::value + T2::value;
-          };
+          using apply = constant_c<T, T1::value + T2::value>;
         };
 
         struct value_type {
