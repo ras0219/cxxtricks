@@ -53,5 +53,8 @@
     <ClInclude Include="mt_eval.test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mt_prettyprinter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -73,6 +73,7 @@
     <ClInclude Include="mt_eval.hpp" />
     <ClInclude Include="mt_eval.test.hpp" />
     <ClInclude Include="mt_expr.hpp" />
+    <ClInclude Include="mt_prettyprinter.hpp" />
     <ClInclude Include="mt_tsystem.hpp" />
     <ClInclude Include="mt_type.hpp" />
     <ClInclude Include="tcheck_structs.hpp" />
