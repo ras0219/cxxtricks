@@ -3,53 +3,10 @@
 #include "false_depend.hpp"
 #include <type_traits>
 #include "tcheck_structs.hpp"
+#include "mt_type.hpp"
+#include "mt_expr.hpp"
 
 namespace rasmeta {
-
-  ///////////////////////////////////
-  // The typesystem
-
-  // type variable alpha, where alpha is not in freevars(G)
-  template<long long N> struct tvar {};
-  // t1 -> t2
-  template<class t1, class t2> struct arr {};
-  // some concrete type defined by Uniques
-  template<class...Uniques> struct concrete_type {};
-  // forall <anonymous>. t
-  template<class t> struct forall {};
-  // A de bruijn reference to an enclosing forall
-  template<long long N> struct tref {};
-
-  ///////////////////////////////////
-  // Type Lookup Helper
-  struct functional {};
-
-  template<class e>
-  struct metatype {
-    static_assert(std::is_base_of<functional, e>::value, "expression 'e' does not specialize metatype<e> or inherit functional");
-    using type = typename e::type;
-  };
-
-  ///////////////////////////////////
-  // The language
-
-  // \<anon>. e
-  template<class e> struct lambda {};
-  // A de bruijn reference to an enclosing lambda
-  template<long long N> struct ref {}; using _0 = ref<0>; using _1 = ref<1>; using _2 = ref<2>;
-  // e1(e2)
-  template<class e1, class e2> struct app {};
-  // NOTE: all other expressions must specialize the type trait metatype<e> and provide ::type
-  // ex.
-  template<long long N> struct int_c {};
-  template<long long N> struct metatype<int_c<N>> {
-    using type = concrete_type<long long>;
-  };
-
-  template<bool N> struct bool_c {};
-  template<bool N> struct metatype<bool_c<N>> {
-    using type = concrete_type<bool>;
-  };
 
   ///////////////////////////////////
   // Sub-algorithms for alg W
@@ -75,6 +32,7 @@ namespace rasmeta {
   };
  
   // instantiate :: (int, type) -> (int, type)
+  // The general idea here is to substitute the forall's one at a time, inside out.
   template<long long N, class TypeExpr>
   struct instantiate_impl {
     using type = TypeExpr;
@@ -120,7 +78,7 @@ namespace rasmeta {
   ///// unify
   template<class Submap, class T1, class T2>
   struct unify_impl {
-    static_assert(____false_depend<T1>::value, "Typechecking failed.");
+    static_assert(____false_depend<T1>::value, "Compile-time typechecking failed.");
   };
   template<class Submap, class T1, class T2>
   using unify = typename unify_impl<Submap, T1, T2>::type;

@@ -1,7 +1,7 @@
 #include "tcheck.hpp"
 #include "mt_tsystem.hpp"
 //#include "tcheck.test.hpp"
-
+#include "mt_eval.test.hpp"
 #include <iostream>
 
 using namespace std;
@@ -43,20 +43,19 @@ ostream& operator<<(ostream& os, concrete_type<bool>) {
 }
 
 struct f : functional {
-  using func = lambda<_0>;
-  using type = typecheck<func>;
+  using ast = lambda<_0>;
+  using type = typecheck<ast>;
 };
 struct f2 : functional {
-  using func = lambda<app<_0, bool_c<true>>>;
-  using type = typecheck<func>;
+  using ast = lambda<app<_0, bool_c<true>>>;
+  using type = typecheck<ast>;
 };
 struct f3 : functional {
-  using func = lambda<f>;
-  using type = typecheck<func>;
+  using ast = lambda<f>;
+  using type = typecheck<ast>;
 };
 
 int main() {
-
   cout << "f :: " << f::type() << endl;
   cout << "f2 :: " << f2::type() << endl;
   cout << "f3 :: " << f3::type() << endl;

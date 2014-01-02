@@ -68,7 +68,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="false_depend.hpp" />
+    <ClInclude Include="has.hpp" />
+    <ClInclude Include="if_c.hpp" />
+    <ClInclude Include="mt_eval.hpp" />
+    <ClInclude Include="mt_eval.test.hpp" />
+    <ClInclude Include="mt_expr.hpp" />
     <ClInclude Include="mt_tsystem.hpp" />
+    <ClInclude Include="mt_type.hpp" />
     <ClInclude Include="tcheck_structs.hpp" />
     <ClInclude Include="tcheck_structs.test.hpp" />
     <ClInclude Include="tcheck.hpp" />
